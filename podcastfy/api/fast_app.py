@@ -54,6 +54,8 @@ os.makedirs(TEMP_DIR, exist_ok=True)
 async def generate_podcast_endpoint(data: dict):
     """"""
     try:
+        logger.info(f"Received generate request with data: {data}")
+        
         # Set environment variables
         os.environ['OPENAI_API_KEY'] = data.get('openai_key')
         os.environ['GEMINI_API_KEY'] = data.get('google_key')
@@ -61,14 +63,17 @@ async def generate_podcast_endpoint(data: dict):
 
         # Load base configuration
         base_config = load_base_config()
+        logger.info(f"Loaded base config: {base_config}")
         
         # Get TTS model and its configuration from base config
         tts_model = data.get('tts_model', base_config.get('text_to_speech', {}).get('default_tts_model', 'openai'))
         tts_base_config = base_config.get('text_to_speech', {}).get(tts_model, {})
+        logger.info(f"Using TTS model: {tts_model} with config: {tts_base_config}")
         
         # Get voices (use user-provided voices or fall back to defaults)
         voices = data.get('voices', {})
         default_voices = tts_base_config.get('default_voices', {})
+        logger.info(f"Using voices: {voices} with defaults: {default_voices}")
         
         # Prepare user configuration
         user_config = {
@@ -91,37 +96,41 @@ async def generate_podcast_endpoint(data: dict):
                 }
             }
         }
-
-        # print(user_config)
+        logger.info(f"Prepared user config: {user_config}")
 
         # Merge configurations
         conversation_config = merge_configs(base_config, user_config)
-
-        # print(conversation_config)
-        
+        logger.info(f"Merged conversation config: {conversation_config}")
 
         # Generate podcast
+        logger.info("Starting podcast generation...")
         result = generate_podcast(
             urls=data.get('urls', []),
             conversation_config=conversation_config,
             tts_model=tts_model,
             longform=bool(data.get('is_long_form', False)),
         )
+        logger.info(f"Podcast generation result: {result}")
+        
         # Handle the result
         if isinstance(result, str) and os.path.isfile(result):
             filename = f"podcast_{os.urandom(8).hex()}.mp3"
             output_path = os.path.join(TEMP_DIR, filename)
             shutil.copy2(result, output_path)
+            logger.info(f"Generated audio file: {output_path}")
             return {"audioUrl": f"/audio/{filename}"}
         elif hasattr(result, 'audio_path'):
             filename = f"podcast_{os.urandom(8).hex()}.mp3"
             output_path = os.path.join(TEMP_DIR, filename)
             shutil.copy2(result.audio_path, output_path)
+            logger.info(f"Generated audio file: {output_path}")
             return {"audioUrl": f"/audio/{filename}"}
         else:
+            logger.error(f"Invalid result format: {result}")
             raise HTTPException(status_code=500, detail="Invalid result format")
 
     except Exception as e:
+        logger.error(f"Error in generate_podcast_endpoint: {str(e)}", exc_info=True)
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/audio/{filename}")
