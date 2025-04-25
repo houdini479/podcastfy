@@ -19,8 +19,8 @@ engagement_techniques:
   - "analogies"
   - "humor"
 creativity: 1
-user_instructions: "
-This is an internal daily podcast for Settled Technologies, a toronto base startup building agentic systems to make legal dispute resolution faster, fairer, and more accessible.   Their first product, TripFix, helps air travelers get compensation for delayed and disrupted flights.
+user_instructions: |
+  This is an internal daily podcast for Settled Technologies, a toronto base startup building agentic systems to make legal dispute resolution faster, fairer, and more accessible. Their first product, TripFix, helps air travelers get compensation for delayed and disrupted flights.
   The show is called "The Goose Report" and is hosted by two AI personas in a friendly, casual tone. 
   The audience is the internal Settled/TripFix team, including engineers, legal analysts, and product leads.
 
@@ -32,7 +32,7 @@ This is an internal daily podcast for Settled Technologies, a toronto base start
   4. Closing – A quick wrap-up that includes a motivational message or thought for the day, plus any closing notes or shoutouts.
 
   The tone should be upbeat but authentic —not forced— balancing enthusiasm with clarity. The dialogue should feel natural, with a bit of humor and warmth. Avoid excessive jargon. 
-  Hosts should engage like colleagues who respect each other, with the main summarizer leading and the second persona chiming in with clarifying or witty remarks."
+  Hosts should engage like colleagues who respect each other, with the main summarizer leading and the second persona chiming in with clarifying or witty remarks.
 
 max_num_chunks: 6 # maximum number of rounds of discussions in longform
 min_chunk_size: 700 # minimum number of characters to generate a round of discussion in longform
