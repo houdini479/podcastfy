@@ -1,0 +1,84 @@
+{
+    "name": "The Settled Daily",
+    "tagline": "Your daily dose of Settled insights and updates",
+    "conversation_style": ["professional", "engaging", "informative", "conversational"],
+    "roles_person1": "host",
+    "roles_person2": "co-host",
+    "dialogue_structure": ["Introduction", "Settled Vitals", "Deep Dive", "Closing"],
+    "engagement_techniques": ["rhetorical questions", "anecdotes", "analogies", "humor"],
+    "creativity": 0.8,
+    "output_language": "English",
+    "user_instructions": "Create a daily company podcast with the following structure:\n\n1. Introduction (2-3 minutes):\n- Start with a warm welcome and light banter between hosts\n- Include today's fun fact or industry insight\n- Briefly preview the episode's content\n\n2. Settled Vitals (3-4 minutes):\n- Deliver updates in a fast-paced, energetic manner\n- Cover project statuses, KPIs, and industry news\n- Keep each update concise and actionable\n\n3. Deep Dive (5-7 minutes):\n- Focus on explaining Recall.ai and its potential integration with our agents\n- Break down technical concepts into accessible explanations\n- Discuss practical implementation steps\n- Include specific examples and use cases\n\n4. Closing (1-2 minutes):\n- Summarize key points from the episode\n- End with a motivational message or call to action\n- Sign off professionally",
+    "text": {
+        "introduction": {
+            "fun_fact": "Did you know that the average person spends 2.5 hours per day in meetings? That's why today's deep dive is particularly relevant!",
+            "preview": "Today we'll explore how we can revolutionize our agent interactions using Recall.ai, plus we've got some exciting updates on our TripFix integration and Q2 metrics."
+        },
+        "settled_vitals": [
+            {
+                "category": "Project Updates",
+                "items": [
+                    "TripFix mobile app beta testing completed with 95% positive feedback",
+                    "New payment integration 80% complete, on track for Q3 launch",
+                    "Customer support response time improved by 40% this quarter"
+                ]
+            },
+            {
+                "category": "Industry News",
+                "items": [
+                    "New EU regulations on flight compensation coming into effect next month",
+                    "Major competitor launched AI-powered customer service feature",
+                    "Industry conference highlights from last week's TravelTech Summit"
+                ]
+            },
+            {
+                "category": "KPIs",
+                "items": [
+                    "User growth: +25% month over month",
+                    "Customer satisfaction: 4.8/5",
+                    "Revenue growth: +30% year to date"
+                ]
+            }
+        ],
+        "deep_dive": {
+            "topic": "Integrating Recall.ai with Our Agent System",
+            "key_points": [
+                "Overview of Recall.ai's capabilities for meeting bots and conversation data",
+                "How Recall.ai can enhance our agent interactions in Google Meet",
+                "Technical implementation steps and requirements",
+                "Potential impact on our customer service efficiency",
+                "Security and privacy considerations"
+            ],
+            "technical_details": {
+                "integration_points": [
+                    "Google Meet bot integration",
+                    "Real-time transcription capabilities",
+                    "Meeting recording and analysis features",
+                    "API endpoints for data access"
+                ],
+                "implementation_considerations": [
+                    "Bot authentication and setup",
+                    "Meeting caption transcription",
+                    "Audio and video stream handling",
+                    "Calendar integration requirements"
+                ]
+            }
+        },
+        "closing": {
+            "key_takeaways": [
+                "Recall.ai could significantly improve our agent efficiency",
+                "Implementation would require careful planning and testing",
+                "Strong Q2 performance across all metrics",
+                "New competitor features to monitor"
+            ],
+            "call_to_action": "Join the Recall.ai integration workshop next Tuesday at 2 PM"
+        }
+    },
+    "urls": ["https://docs.recall.ai/?utm_source=Recall.ai&utm_medium=navbar&utm_content=API_Docs"],
+    "tts_model": "openai",
+    "voices": {
+        "question": "alloy",
+        "answer": "echo"
+    },
+    "is_long_form": false
+} 
