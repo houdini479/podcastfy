@@ -14,7 +14,11 @@ from typing import Dict, Any
 from pathlib import Path
 from ..client import generate_podcast
 import uvicorn
+import logging
 
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 def load_base_config() -> Dict[Any, Any]:
     config_path = Path(__file__).parent / "podcastfy" / "conversation_config.yaml"
@@ -130,9 +134,18 @@ async def serve_audio(filename: str):
 
 @app.get("/health")
 async def healthcheck():
+    logger.info("Health check endpoint called")
     return {"status": "healthy"}
 
 if __name__ == "__main__":
-    host = os.getenv("HOST", "127.0.0.1")
+    host = os.getenv("HOST", "0.0.0.0")  # Changed default to 0.0.0.0
     port = int(os.getenv("PORT", 8080))
-    uvicorn.run(app, host=host, port=port)
+    logger.info(f"Starting server on {host}:{port}")
+    uvicorn.run(
+        app, 
+        host=host, 
+        port=port,
+        log_level="info",
+        access_log=True,
+        use_colors=True
+    )
