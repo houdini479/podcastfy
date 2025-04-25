@@ -27,7 +27,8 @@ RUN python3 -m pip install --upgrade pip
 RUN pip install --no-cache-dir \
     flake8 \
     pytest \
-    pytest-xdist
+    pytest-xdist \
+    uvicorn
 
 # Copy requirements first to leverage Docker cache
 COPY requirements.txt .
@@ -43,6 +44,11 @@ RUN pip install -e .
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1
+ENV HOST=0.0.0.0
+ENV PORT=8080
+
+# Create temp_audio directory
+RUN mkdir -p /app/podcastfy/api/temp_audio
 
 # Verify installations
 RUN echo "Verifying installations:" && \
@@ -57,4 +63,4 @@ RUN flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics && \
     flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
 # Command to run when container starts
-CMD ["python3"]
+CMD ["python3", "-m", "podcastfy.api.fast_app"]
