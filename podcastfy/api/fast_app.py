@@ -52,7 +52,6 @@ os.makedirs(TEMP_DIR, exist_ok=True)
 
 @app.post("/generate")
 async def generate_podcast_endpoint(data: dict):
-    """"""
     try:
         logger.info(f"Received generate request with data: {data}")
         
@@ -97,13 +96,23 @@ async def generate_podcast_endpoint(data: dict):
         conversation_config = merge_configs(base_config, user_config)
         logger.info(f"Merged conversation config: {conversation_config}")
 
-        # Generate podcast
+        # Generate podcast with all possible input types
         logger.info("Starting podcast generation...")
         result = generate_podcast(
             urls=data.get('urls', []),
-            conversation_config=conversation_config,
+            url_file=data.get('url_file'),
+            transcript_file=data.get('transcript_file'),
             tts_model=tts_model,
-            longform=bool(data.get('is_long_form', False)),
+            transcript_only=data.get('transcript_only', False),
+            config=data.get('config'),
+            conversation_config=conversation_config,
+            image_paths=data.get('image_paths', []),
+            is_local=data.get('is_local', False),
+            text=data.get('text'),
+            llm_model_name=data.get('llm_model_name'),
+            api_key_label=data.get('api_key_label'),
+            topic=data.get('topic'),
+            longform=bool(data.get('is_long_form', False))
         )
         logger.info(f"Podcast generation result: {result}")
         

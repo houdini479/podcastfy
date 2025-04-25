@@ -2,14 +2,16 @@ conversation_style:
   - "engaging"
   - "fast-paced"
   - "enthusiastic"
-roles_person1: "main summarizer"
-roles_person2: "questioner/clarifier"
+roles_person1: "host"
+roles_person2: "co-host"
 dialogue_structure: 
   - "Introduction"
-  - "Main Content Summary"
-  - "Conclusion"
-podcast_name: "PODCASTIFY"
-podcast_tagline: "Your Personal Generative AI Podcast"
+  - "Settled Vitals"
+  - "Deep Dive"
+  - "Closing"
+
+podcast_name: "The Goose Report"
+podcast_tagline: "One honk a day keeps the chaos away."
 output_language: "English"
 engagement_techniques: 
   - "rhetorical questions"
@@ -17,19 +19,33 @@ engagement_techniques:
   - "analogies"
   - "humor"
 creativity: 1
-user_instructions: ""
-max_num_chunks: 8 # maximum number of rounds of discussions in longform
-min_chunk_size: 600 # minimum number of characters to generate a round of discussion in longform
+user_instructions: : "
+This is an internal daily podcast for Settled Technologies, a toronto base startup building agentic systems to make legal dispute resolution faster, fairer, and more accessible.   Their first product, TripFix, helps air travelers get compensation for delayed and disrupted flights.
+  The show is called “The Goose Report” and is hosted by two AI personas in a friendly, casual tone. 
+  The audience is the internal Settled/TripFix team, including engineers, legal analysts, and product leads.
+
+  Each episode includes four sections:
+
+  1. Introduction – A short, light-hearted welcome with casual banter between hosts and any introductory content provided.
+  2. Settled Vitals – A brief (3-5 minute) rapid-fire update on internal KPIs, project updates, team shoutouts, and industry news. This should be high-energy, tight, and informative.
+  3. Deep Dive – A longer-form segment (5-10 minutes) focused on a single topic (e.g., a product decision, new tech, or partnership opportunity). The goal is to unpack and explore.
+  4. Closing – A quick wrap-up that includes a motivational message or thought for the day, plus any closing notes or shoutouts.
+
+  The tone should be upbeat but authentic —not forced— balancing enthusiasm with clarity. The dialogue should feel natural, with a bit of humor and warmth. Avoid excessive jargon. 
+  Hosts should engage like colleagues who respect each other, with the main summarizer leading and the second persona chiming in with clarifying or witty remarks."
+
+max_num_chunks: 6 # maximum number of rounds of discussions in longform
+min_chunk_size: 700 # minimum number of characters to generate a round of discussion in longform
 
 text_to_speech:
-  default_tts_model: "openai"
+  default_tts_model: "elevenlabs"
   output_directories:
     transcripts: "./data/transcripts"
     audio: "./data/audio"
   elevenlabs:
     default_voices:
       question: "Chris"
-      answer: "Jessica"
+      answer: "Mark - Natural Conversations"
     model: "eleven_multilingual_v2"
   openai:
     default_voices:
@@ -51,4 +67,4 @@ text_to_speech:
       model: "en-US-Studio-MultiSpeaker"
   audio_format: "mp3"
   temp_audio_dir: "data/audio/tmp/"
-  ending_message: "See You Next Time!"
+  ending_message: "See you next time on The Goose Report!"
