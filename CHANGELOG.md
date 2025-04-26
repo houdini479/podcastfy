@@ -1,5 +1,15 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+- Development environment improvements:
+  - Added `start_dev.sh` script for easy local development
+  - Integrated frontend and backend servers with hot-reloading
+  - Automatic process cleanup and management
+- Improved podcast file naming:
+  - Changed from random hex to `{podcast_title}_{timestamp}.mp3` format
+  - Better organization and chronological tracking of generated podcasts
 
 ## [0.4.0] - 2024-11-16
 

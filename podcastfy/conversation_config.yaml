@@ -19,6 +19,29 @@ engagement_techniques:
   - "analogies"
   - "humor"
 creativity: 1
+
+# Emotion configuration for SSML tags
+emotion_tags:
+  excited: "for achievements and positive news"
+  serious: "for important announcements"
+  casual: "for regular banter"
+  curious: "for questions and exploration"
+  professional: "for analysis and insights"
+  warm: "for personal connections"
+  inspiring: "for motivational content"
+
+# Prosody configuration for speech characteristics
+prosody_tags:
+  rate:
+    slow: "for important points"
+    fast: "for exciting news"
+  pitch:
+    low: "for serious topics"
+    high: "for enthusiastic content"
+  volume:
+    soft: "for personal insights"
+    loud: "for announcements"
+
 user_instructions: |
   This is an internal daily podcast for Settled Technologies, a toronto base startup building agentic systems to make legal dispute resolution faster, fairer, and more accessible. Their first product, TripFix, helps air travelers get compensation for delayed and disrupted flights.
   The show is called "The Goose Report" and is hosted by two AI personas in a friendly, casual tone. 
@@ -34,8 +57,62 @@ user_instructions: |
   The tone should be upbeat but authentic —not forced— balancing enthusiasm with clarity. The dialogue should feel natural, with a bit of humor and warmth. Avoid excessive jargon. 
   Hosts should engage like colleagues who respect each other, with the main summarizer leading and the second persona chiming in with clarifying or witty remarks.
 
+  Use SSML tags to add emotional context to the dialogue:
+  - <emotion type="excited"> for achievements and positive news
+  - <emotion type="serious"> for important announcements
+  - <emotion type="casual"> for regular banter
+  - <emotion type="curious"> for questions and exploration
+  - <emotion type="professional"> for analysis and insights
+  - <emotion type="warm"> for personal connections
+  - <emotion type="inspiring"> for motivational content
+
+  Use <prosody> tags to control speech characteristics:
+  - <prosody rate="slow" pitch="low"> for important points
+  - <prosody rate="fast" pitch="high"> for exciting news
+  - <prosody volume="soft"> for personal insights
+  - <prosody volume="loud"> for announcements
+
+  Combine emotions and prosody for natural variation:
+  <Person1>: <emotion type="excited"><prosody rate="fast" pitch="high">This is amazing news!</prosody></emotion>
+  <Person2>: <emotion type="serious"><prosody rate="slow" pitch="low">Let's analyze what this means for us.</prosody></emotion>
+
 max_num_chunks: 6 # maximum number of rounds of discussions in longform
 min_chunk_size: 700 # minimum number of characters to generate a round of discussion in longform
+
+# Audio assets configuration
+audio_assets:
+  intro_music:
+    path: "./assets/music/intro.mp3"
+    fade_in: 2.0  # seconds
+    fade_out: 2.0  # seconds
+    volume: 0.8   # 0.0 to 1.0
+  outro_music:
+    path: "./assets/music/outro.mp3"
+    fade_in: 2.0
+    fade_out: 3.0
+    volume: 0.8
+  transitions:
+    settled_vitals:
+      music:
+        path: "./assets/music/vitals_transition.mp3"
+        fade_in: 1.0
+        fade_out: 1.5
+        volume: 0.7
+      announcement: "And now it's time for our daily Settled Vitals!"
+    deep_dive:
+      music:
+        path: "./assets/music/deep_dive_transition.mp3"
+        fade_in: 1.5
+        fade_out: 2.0
+        volume: 0.7
+      announcement: "Let's dive deep into today's topic!"
+    closing:
+      music:
+        path: "./assets/music/closing_transition.mp3"
+        fade_in: 1.0
+        fade_out: 2.0
+        volume: 0.7
+      announcement: "And now, let's wrap things up!"
 
 text_to_speech:
   default_tts_model: "elevenlabs"

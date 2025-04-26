@@ -91,6 +91,34 @@ Sample 3: Pop culture icon Taylor Swift and Mona Lisa, 1503 (Leonardo da Vinci)
 
 2. Set up your [API keys](usage/config.md)
 
+### Development Environment
+To run the development environment locally:
+
+1. Clone the repository:
+```bash
+git clone https://github.com/souzatharsis/podcastfy.git
+cd podcastfy
+```
+
+2. Install development dependencies:
+```bash
+pip install -r dev-requirements.txt
+```
+
+3. Start the development servers:
+```bash
+./start_dev.sh
+```
+
+This will start:
+- Frontend server at http://localhost:8000
+- Backend API at http://localhost:8080
+
+The development environment includes:
+- Hot-reloading for both frontend and backend
+- Automatic cleanup of processes
+- Easy start/stop with a single command
+
 ### Python
 ```python
 from podcastfy.client import generate_podcast

@@ -193,7 +193,31 @@ class LongFormContentGenerator:
             If last tag in CONTEXT is <Person1>, then the first to speak now should be <Person2>.
             If last tag in CONTEXT is <Person2>, then the first to speak now should be <Person1>.
             This is a live conversation without any breaks.
-            Hence, avoid statemeents such as "we'll discuss after a short break.  Stay tuned" or "Okay, so, picking up where we left off".
+            Hence, avoid statements such as "we'll discuss after a short break. Stay tuned" or "Okay, so, picking up where we left off".
+
+            Use SSML tags to add emotional context to the dialogue:
+            - <emotion type="excited"> for achievements and positive news
+            - <emotion type="serious"> for important announcements
+            - <emotion type="casual"> for regular banter
+            - <emotion type="curious"> for questions and exploration
+            - <emotion type="professional"> for analysis and insights
+            - <emotion type="warm"> for personal connections
+            - <emotion type="inspiring"> for motivational content
+
+            Example format:
+            <Person1>: <emotion type="excited">Great news! We've hit our target!</emotion>
+            <Person2>: <emotion type="curious">That's fantastic! How did we achieve that?</emotion>
+            <Person1>: <emotion type="professional">Well, let me break down the key factors...</emotion>
+
+            Use <prosody> tags to control speech characteristics:
+            - <prosody rate="slow" pitch="low"> for important points
+            - <prosody rate="fast" pitch="high"> for exciting news
+            - <prosody volume="soft"> for personal insights
+            - <prosody volume="loud"> for announcements
+
+            Combine emotions and prosody for natural variation:
+            <Person1>: <emotion type="excited"><prosody rate="fast" pitch="high">This is amazing news!</prosody></emotion>
+            <Person2>: <emotion type="serious"><prosody rate="slow" pitch="low">Let's analyze what this means for us.</prosody></emotion>
         """ 
 
         # Add part-specific instructions

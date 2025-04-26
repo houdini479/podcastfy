@@ -7,21 +7,34 @@ with configuration management and temporary file handling.
 
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse, JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 import os
 import shutil
 import yaml
 from typing import Dict, Any
 from pathlib import Path
-from ..client import generate_podcast
+from podcastfy.client import generate_podcast
+from podcastfy.audio_mixer import AudioMixer
 import uvicorn
 import logging
+from pydub import AudioSegment
+from datetime import datetime
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+# Define base paths
+BASE_DIR = Path(__file__).parent.parent
+TEMP_DIR = BASE_DIR / "api" / "temp_audio"
+ASSETS_DIR = BASE_DIR / "assets" / "music"
+
+# Ensure directories exist
+TEMP_DIR.mkdir(parents=True, exist_ok=True)
+ASSETS_DIR.mkdir(parents=True, exist_ok=True)
+
 def load_base_config() -> Dict[Any, Any]:
-    config_path = Path(__file__).parent / "podcastfy" / "conversation_config.yaml"
+    config_path = BASE_DIR / "conversation_config.yaml"
     try:
         with open(config_path, 'r') as file:
             return yaml.safe_load(file)
@@ -47,8 +60,14 @@ def merge_configs(base_config: Dict[Any, Any], user_config: Dict[Any, Any]) -> D
 
 app = FastAPI()
 
-TEMP_DIR = os.path.join(os.path.dirname(__file__), "temp_audio")
-os.makedirs(TEMP_DIR, exist_ok=True)
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.post("/generate")
 async def generate_podcast_endpoint(data: dict):
@@ -116,18 +135,58 @@ async def generate_podcast_endpoint(data: dict):
         )
         logger.info(f"Podcast generation result: {result}")
         
-        # Handle the result
+        # Handle the result and add music/transitions
         if isinstance(result, str) and os.path.isfile(result):
-            filename = f"podcast_{os.urandom(8).hex()}.mp3"
-            output_path = os.path.join(TEMP_DIR, filename)
-            shutil.copy2(result, output_path)
-            logger.info(f"Generated audio file: {output_path}")
+            # Initialize audio mixer
+            audio_mixer = AudioMixer(conversation_config)
+            
+            # Load the generated audio
+            main_audio = AudioSegment.from_file(result)
+            
+            # Add transitions between sections
+            for section in conversation_config.get('dialogue_structure', []):
+                if section.lower() in ['settled vitals', 'deep dive', 'closing']:
+                    transition_type = f"transition_{section.lower().replace(' ', '_')}"
+                    announcement = conversation_config.get('audio_assets', {}).get('transitions', {}).get(transition_type, {}).get('announcement')
+                    main_audio = audio_mixer.mix_transition(main_audio, transition_type, announcement)
+            
+            # Create final podcast with intro and outro
+            final_audio = audio_mixer.create_podcast(main_audio)
+            
+            # Save the final audio
+            podcast_title = conversation_config.get('podcast_name', 'podcast').replace(' ', '_').lower()
+            timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+            filename = f"{podcast_title}_{timestamp}.mp3"
+            output_path = TEMP_DIR / filename
+            final_audio.export(str(output_path), format="mp3")
+            
+            logger.info(f"Generated audio file with music and transitions: {output_path}")
             return {"audioUrl": f"/audio/{filename}"}
         elif hasattr(result, 'audio_path'):
-            filename = f"podcast_{os.urandom(8).hex()}.mp3"
-            output_path = os.path.join(TEMP_DIR, filename)
-            shutil.copy2(result.audio_path, output_path)
-            logger.info(f"Generated audio file: {output_path}")
+            # Initialize audio mixer
+            audio_mixer = AudioMixer(conversation_config)
+            
+            # Load the generated audio
+            main_audio = AudioSegment.from_file(result.audio_path)
+            
+            # Add transitions between sections
+            for section in conversation_config.get('dialogue_structure', []):
+                if section.lower() in ['settled vitals', 'deep dive', 'closing']:
+                    transition_type = f"transition_{section.lower().replace(' ', '_')}"
+                    announcement = conversation_config.get('audio_assets', {}).get('transitions', {}).get(transition_type, {}).get('announcement')
+                    main_audio = audio_mixer.mix_transition(main_audio, transition_type, announcement)
+            
+            # Create final podcast with intro and outro
+            final_audio = audio_mixer.create_podcast(main_audio)
+            
+            # Save the final audio
+            podcast_title = conversation_config.get('podcast_name', 'podcast').replace(' ', '_').lower()
+            timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+            filename = f"{podcast_title}_{timestamp}.mp3"
+            output_path = TEMP_DIR / filename
+            final_audio.export(str(output_path), format="mp3")
+            
+            logger.info(f"Generated audio file with music and transitions: {output_path}")
             return {"audioUrl": f"/audio/{filename}"}
         else:
             logger.error(f"Invalid result format: {result}")
@@ -139,16 +198,16 @@ async def generate_podcast_endpoint(data: dict):
 
 @app.get("/audio/{filename}")
 async def serve_audio(filename: str):
-    """ Get File Audio From ther Server"""
-    file_path = os.path.join(TEMP_DIR, filename)
-    if not os.path.exists(file_path):
+    """Serve audio file from the server"""
+    file_path = TEMP_DIR / filename
+    if not file_path.exists():
         raise HTTPException(status_code=404, detail="File not found")
-    return FileResponse(file_path)
+    return FileResponse(str(file_path))
 
 @app.get("/health")
 async def healthcheck():
-    logger.info("Health check endpoint called")
-    return {"status": "healthy"}
+    """Health check endpoint"""
+    return {"status": "healthy", "version": "1.0.0"}
 
 if __name__ == "__main__":
     host = os.getenv("HOST", "0.0.0.0")  # Changed default to 0.0.0.0
