@@ -1,0 +1,10 @@
+<Person1> "Welcome to The Goose Report - One honk a day keeps the chaos away..  Why don't scientists trust atoms? Because they make up everything!    Ready for today's honking good insights, co-host?" 
+</Person1><Person2> "Always, let's fly into those Settled Vitals!"
+</Person2><Person1> "Alright, team, buckle up for some fast facts! Cats can jump up to six times their height.    Purring is a healing superpower – seriously!   They have 32 muscles in each ear,   can't taste sweetness,  and use their whiskers for spatial awareness." 
+</Person1><Person2> "Wow, whisker GPS! Imagine the upgrade for TripFix?" 
+</Person2><Person1> " Exactly! Onto our deep dive, today - the mighty car engine!   Think of it like this, air and fuel mix in the cylinders, boom, an explosion pushes a piston that turns a crankshaft.   That spinning crankshaft ultimately powers the wheels. It's a beautiful symphony of controlled explosions, kinda like our legal battles, only way less messy." 
+</Person1><Person2> " Controlled explosions, perfect analogy! So, like, more boom, less courtroom drama?" 
+</Person2><Person1> "Precisely!  And it keeps on chugging through all four strokes: intake, compression, combustion, and exhaust. Intake sucks in the air and fuel mix, compression squeezes it tight, combustion -  kaboom!  and then exhaust gets rid of the leftovers. Pretty neat, huh?"
+</Person1><Person2> "So, it's like a well-oiled, exploding cycle of awesomeness.   Got it. Now I want to go build one!" 
+</Person2><Person1> " I feel that! Big thanks for tuning in to The Goose Report.  Keep those wings flapping, and we'll see you tomorrow!"
+</Person1><Person2> "Honk! Honk!"</Person2>

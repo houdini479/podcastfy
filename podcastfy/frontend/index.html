@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Podcastify - Podcast Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .section {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .section h2 {
+            margin-top: 0;
+            color: #444;
+        }
+        textarea {
+            width: 100%;
+            min-height: 100px;
+            margin: 10px 0;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            display: block;
+            margin: 20px auto;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        .status {
+            text-align: center;
+            margin: 20px 0;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .success {
+            background-color: #dff0d8;
+            color: #3c763d;
+        }
+        .error {
+            background-color: #f2dede;
+            color: #a94442;
+        }
+        .loading {
+            background-color: #d9edf7;
+            color: #31708f;
+        }
+        .audio-player {
+            width: 100%;
+            margin: 20px 0;
+        }
+        .config-section {
+            margin-bottom: 20px;
+        }
+        .config-section label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .config-section select, .config-section input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        #debug-info {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Podcastify - Podcast Generator</h1>
+        
+        <div class="config-section">
+            <h2>Configuration</h2>
+            <label for="tts-model">TTS Model:</label>
+            <select id="tts-model">
+                <option value="elevenlabs">ElevenLabs</option>
+                <option value="openai">OpenAI</option>
+                <option value="edge">Edge</option>
+                <option value="gemini">Gemini</option>
+            </select>
+            
+            <label for="creativity">Creativity (0.0 - 1.0):</label>
+            <input type="number" id="creativity" min="0" max="1" step="0.1" value="1.0">
+            
+            <label for="is-long-form">Long Form Content:</label>
+            <input type="checkbox" id="is-long-form">
+        </div>
+
+        <div class="section">
+            <h2>Introduction</h2>
+            <textarea id="introduction" placeholder="Enter introduction content..."></textarea>
+        </div>
+
+        <div class="section">
+            <h2>Settled Vitals</h2>
+            <textarea id="vitals" placeholder="Enter KPIs, project updates, team shoutouts, and industry news..."></textarea>
+        </div>
+
+        <div class="section">
+            <h2>Deep Dive</h2>
+            <textarea id="deep-dive" placeholder="Enter main topic and key points..."></textarea>
+        </div>
+
+        <div class="section">
+            <h2>Closing</h2>
+            <textarea id="closing" placeholder="Enter closing message and notes..."></textarea>
+        </div>
+
+        <button id="generate-btn">Generate Podcast</button>
+        
+        <div id="status" class="status" style="display: none;"></div>
+        
+        <audio id="audio-player" class="audio-player" controls style="display: none;"></audio>
+        
+        <div id="debug-info"></div>
+    </div>
+
+    <script>
+        // Debug logging function
+        function logDebug(message) {
+            const debugInfo = document.getElementById('debug-info');
+            debugInfo.style.display = 'block';
+            debugInfo.textContent += message + '\n';
+            console.log(message);
+        }
+
+        // Test API connection
+        async function testApiConnection() {
+            try {
+                const response = await fetch('http://localhost:8080/health');
+                if (response.ok) {
+                    logDebug('API connection successful');
+                    return true;
+                } else {
+                    logDebug(`API health check failed: ${response.status}`);
+                    return false;
+                }
+            } catch (error) {
+                logDebug(`API connection error: ${error.message}`);
+                return false;
+            }
+        }
+
+        // Initialize
+        window.addEventListener('load', async () => {
+            logDebug('Testing API connection...');
+            const isConnected = await testApiConnection();
+            if (!isConnected) {
+                const status = document.getElementById('status');
+                status.className = 'status error';
+                status.textContent = 'Warning: Cannot connect to API server. Please ensure the backend is running on port 8080.';
+                status.style.display = 'block';
+            }
+        });
+
+        document.getElementById('generate-btn').addEventListener('click', async () => {
+            const button = document.getElementById('generate-btn');
+            const status = document.getElementById('status');
+            const audioPlayer = document.getElementById('audio-player');
+            
+            // Clear previous debug info
+            document.getElementById('debug-info').textContent = '';
+            
+            // Disable button and show loading state
+            button.disabled = true;
+            status.className = 'status loading';
+            status.textContent = 'Generating podcast...';
+            status.style.display = 'block';
+            audioPlayer.style.display = 'none';
+            
+            try {
+                // Prepare the request data
+                const data = {
+                    tts_model: document.getElementById('tts-model').value,
+                    creativity: parseFloat(document.getElementById('creativity').value),
+                    is_long_form: document.getElementById('is-long-form').checked,
+                    text: `
+                        Introduction:
+                        ${document.getElementById('introduction').value}
+                        
+                        Settled Vitals:
+                        ${document.getElementById('vitals').value}
+                        
+                        Deep Dive:
+                        ${document.getElementById('deep-dive').value}
+                        
+                        Closing:
+                        ${document.getElementById('closing').value}
+                    `,
+                    user_instructions: `
+                        This is an internal daily podcast for Settled Technologies, a toronto base startup building agentic systems to make legal dispute resolution faster, fairer, and more accessible. Their first product, TripFix, helps air travelers get compensation for delayed and disrupted flights.
+                        The show is called "The Goose Report" and is hosted by two AI personas in a friendly, casual tone. 
+                        The audience is the internal Settled/TripFix team, including engineers, legal analysts, and product leads.
+
+                        Each episode includes four sections:
+
+                        1. Introduction – A short, light-hearted welcome with casual banter between hosts and any introductory content provided.
+                        2. Settled Vitals – A brief (3-5 minute) rapid-fire update on internal KPIs, project updates, team shoutouts, and industry news. This should be high-energy, tight, and informative.
+                        3. Deep Dive – A longer-form segment (5-10 minutes) focused on a single topic (e.g., a product decision, new tech, or partnership opportunity). The goal is to unpack and explore.
+                        4. Closing – A quick wrap-up that includes a motivational message or thought for the day, plus any closing notes or shoutouts.
+
+                        The tone should be upbeat but authentic —not forced— balancing enthusiasm with clarity. The dialogue should feel natural, with a bit of humor and warmth. Avoid excessive jargon. 
+                        Hosts should engage like colleagues who respect each other, with the main summarizer leading and the second persona chiming in with clarifying or witty remarks.
+                    `
+                };
+                
+                logDebug('Sending request to API...');
+                logDebug(`Request data: ${JSON.stringify(data, null, 2)}`);
+                
+                // Make the API request
+                const response = await fetch('http://localhost:8080/generate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                logDebug(`Response status: ${response.status}`);
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    logDebug(`Error response: ${errorText}`);
+                    throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
+                }
+                
+                const result = await response.json();
+                logDebug(`Response data: ${JSON.stringify(result, null, 2)}`);
+                
+                // Show success message
+                status.className = 'status success';
+                status.textContent = 'Podcast generated successfully!';
+                
+                // Play the audio
+                const audioUrl = `http://localhost:8080${result.audioUrl}`;
+                logDebug(`Audio URL: ${audioUrl}`);
+                
+                // Add error handling for audio loading
+                audioPlayer.onerror = function() {
+                    logDebug(`Error loading audio: ${audioPlayer.error.message}`);
+                    status.className = 'status error';
+                    status.textContent = `Error loading audio: ${audioPlayer.error.message}`;
+                };
+                
+                // Add loading handler
+                audioPlayer.onloadstart = function() {
+                    logDebug('Audio loading started...');
+                    status.textContent = 'Loading audio...';
+                };
+                
+                // Add loaded handler
+                audioPlayer.onloadeddata = function() {
+                    logDebug('Audio loaded successfully');
+                    status.textContent = 'Podcast generated successfully!';
+                };
+                
+                audioPlayer.src = audioUrl;
+                audioPlayer.style.display = 'block';
+                
+            } catch (error) {
+                // Show error message
+                status.className = 'status error';
+                status.textContent = `Error: ${error.message}`;
+                logDebug(`Error details: ${error.stack}`);
+            } finally {
+                // Re-enable button
+                button.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html> 

@@ -1,0 +1,18 @@
+<Person1> "Welcome to The Goose Report - One honk a day keeps the chaos away..  Why don't scientists trust atoms? Because they make up everything!   I'm excited to dive into today's episode with you all!" 
+</Person1><Person2> "Absolutely! I'm ready to honk about all things Settled and TripFix! Let's get started!" 
+</Person2><Person1> "First up, Settled Vitals!  Fasten your seatbelts, folks, because we're going feline fast with five facts about cats.  Fact one: cats can jump up to six times their height! 
+</Person1><Person2> "Wow, impressive!  Fact two:  Cats can make over 100 different sounds, whereas dogs can only make about 10!"
+</Person2><Person1> "Talkative little furballs!   Fact three:  A cat's purr can have a healing effect on humans, reducing stress and lowering blood pressure." 
+</Person1><Person2> "Purrfectly relaxing. Fact four: Cats sleep for about 70% of their lives. Talk about a dream job!"
+</Person2><Person1> "Lazy, but adorable.    And finally, fact five:  Cats have 32 muscles in each ear, allowing them to rotate them 180 degrees!" 
+</Person1><Person2> "Incredible! Now, let's shift gears and delve into our Deep Dive: how a car engine works!"
+</Person2><Person1> "Alright, so, picture this: a controlled explosion happening thousands of times a minute.  That's the core of your car engine!    It all starts with air and fuel mixing in the cylinders..." 
+</Person1><Person2> "Right, like a perfectly timed recipe.  Then, boom!  The spark plug ignites the mixture, pushing the piston down." 
+</Person2><Person1> "Exactly! This downward motion turns the crankshaft, which ultimately transfers power to the wheels. It's a symphony of controlled combustion!" 
+</Person1><Person2> "But what about the exhaust? All that exploded fuel has to go somewhere, right?"
+</Person2><Person1> "Absolutely.   The spent gases are pushed out through the exhaust system, making room for the next cycle of air and fuel. It's a continuous loop of intake, compression, combustion, and exhaust." 
+</Person1><Person2> "So, it’s like a carefully choreographed dance of air, fuel, and fire! That's pretty neat when you break it down." 
+</Person2><Person1> "Totally! And it's a testament to human ingenuity how we harnessed this process for transportation." 
+</Person1><Person1> "Well, that concludes our Deep Dive. Any final thoughts before we wrap up?"
+</Person1><Person2> "Just that I'm ready for a cat nap after all that engine talk!"
+</Person2><Person1> "Haha, me too. Big thanks to everyone for tuning in to The Goose Report!    Remember, keep honking, and we'll see you all tomorrow!" </Person1>
