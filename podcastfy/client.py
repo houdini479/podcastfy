@@ -86,8 +86,7 @@ def process_content(
                 is_local=is_local,
                 model_name=model_name,
                 api_key_label=api_key_label,
-                conversation_config=conv_config.to_dict(),
-                longform=longform
+                conversation_config=conv_config.to_dict()
             )
 
             combined_content = ""
