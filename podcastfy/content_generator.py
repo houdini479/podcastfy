@@ -33,16 +33,17 @@ class LLMBackend:
         temperature: float,
         max_output_tokens: int,
         model_name: str,
-        api_key_label: str = "GEMINI_API_KEY",
+        api_key_label: str = "OPENAI_API_KEY",
     ):
         """
         Initialize the LLMBackend.
 
         Args:
-                is_local (bool): Whether to use a local LLM or not.
-                temperature (float): The temperature for text generation.
-                max_output_tokens (int): The maximum number of output tokens.
-                model_name (str): The name of the model to use.
+            is_local (bool): Whether to use a local LLM or not.
+            temperature (float): The temperature for text generation.
+            max_output_tokens (int): The maximum number of output tokens.
+            model_name (str): The name of the model to use.
+            api_key_label (str): The environment variable name for the API key.
         """
         self.is_local = is_local
         self.temperature = temperature
@@ -54,25 +55,17 @@ class LLMBackend:
             "temperature": temperature,
             "presence_penalty": 0.75,  # Encourage diverse content
             "frequency_penalty": 0.75,  # Avoid repetition
+            "max_tokens": max_output_tokens,
         }
 
         if is_local:
-            self.llm = Llamafile() # replace with ollama
-        elif (
-            "gemini" in self.model_name.lower()
-        ):  # keeping original gemini as a special case while we build confidence on LiteLLM
-
-            self.llm = ChatGoogleGenerativeAI(
-                api_key=os.environ["GEMINI_API_KEY"],
-                model=model_name,
-                max_output_tokens=max_output_tokens,
-                **common_params,
-            )
-        else:  # user should set api_key_label from input
+            self.llm = Llamafile()  # replace with ollama
+        else:
             self.llm = ChatLiteLLM(
                 model=self.model_name,
                 temperature=temperature,
                 api_key=os.environ[api_key_label],
+                **common_params
             )
 
 
@@ -730,68 +723,45 @@ class ContentGenerator:
     def __init__(
         self, 
         is_local: bool=False, 
-        model_name: str="gemini-1.5-pro-latest", 
-        api_key_label: str="GEMINI_API_KEY",
+        model_name: str="gpt-4",  # Changed from gemini-1.5-pro-latest to gpt-4
+        api_key_label: str="OPENAI_API_KEY",  # Changed from GEMINI_API_KEY to OPENAI_API_KEY
         conversation_config: Optional[Dict[str, Any]] = None
     ):
         """
         Initialize the ContentGenerator.
 
         Args:
-                api_key (str): API key for Google's Generative AI.
-                conversation_config (Optional[Dict[str, Any]]): Custom conversation configuration.
+            is_local (bool): Whether to use a local LLM or not.
+            model_name (str): The name of the model to use.
+            api_key_label (str): The environment variable name for the API key.
+            conversation_config (Optional[Dict]): Configuration for conversation settings.
         """
-        #os.environ["GOOGLE_API_KEY"] = api_key
         self.config = load_config()
-        self.content_generator_config = self.config.get("content_generator", {})
-
-        self.config_conversation = load_conversation_config(conversation_config)
-        self.tts_config = self.config_conversation.get("text_to_speech", {})
-
-        # Get output directories from conversation config
-        self.output_directories = self.tts_config.get("output_directories", {})
-
-        # Create output directories if they don't exist
-        transcripts_dir = self.output_directories.get("transcripts")
-
-        if transcripts_dir and not os.path.exists(transcripts_dir):
-            os.makedirs(transcripts_dir)
+        self.conversation_config = load_conversation_config(conversation_config)
+        self.content_generator_config = self.conversation_config.get("content_generator", {})
         
-        self.is_local = is_local
-
-                # Initialize LLM backend
-        if not model_name:
-            model_name = self.content_generator_config.get("llm_model")
-        if is_local:
-            model_name = "User provided local model"
-
-        llm_backend = LLMBackend(
+        # Initialize LLM backend
+        self.llm_backend = LLMBackend(
             is_local=is_local,
-            temperature=self.config_conversation.get("creativity", 1),
-            max_output_tokens=self.content_generator_config.get(
-                "max_output_tokens", 8192
-            ),
+            temperature=self.conversation_config.get("creativity", 0.7),
+            max_output_tokens=self.content_generator_config.get("max_output_tokens", 4096),
             model_name=model_name,
-            api_key_label=api_key_label,
+            api_key_label=api_key_label
         )
-
-        self.llm = llm_backend.llm
-
-
-
-        # Initialize strategies with configs
-        self.strategies = {
-            True: LongFormContentStrategy(
-                self.llm,
+        
+        # Initialize content generation strategy
+        if longform:
+            self.strategy = LongFormContentStrategy(
+                self.llm_backend.llm,
                 self.content_generator_config,
-                self.config_conversation
-            ),
-            False: StandardContentStrategy(
-                self.llm,
-                self.content_generator_config,
-                self.config_conversation
+                self.conversation_config
             )
-        }
+        else:
+            self.strategy = StandardContentStrategy(
+                self.llm_backend.llm,
+                self.content_generator_config,
+                self.conversation_config
+            )
 
     def __compose_prompt(self, num_images: int, longform: bool=False):
         """
@@ -835,7 +805,7 @@ class ContentGenerator:
         user_prompt_template = ChatPromptTemplate.from_messages(
             messages=[HumanMessagePromptTemplate.from_template(messages)]
         )
-        user_instructions = self.config_conversation.get("user_instructions", "")
+        user_instructions = self.conversation_config.get("user_instructions", "")
 
         user_instructions = (
             "[[MAKE SURE TO FOLLOW THESE INSTRUCTIONS OVERRIDING THE PROMPT TEMPLATE IN CASE OF CONFLICT: "
@@ -886,21 +856,21 @@ class ContentGenerator:
         """
         try:
             # Get appropriate strategy
-            strategy = self.strategies[longform]
+            strategy = self.strategy
             
             # Validate inputs for chosen strategy
             strategy.validate(input_texts, image_file_paths)
 
             # Setup chain
-            num_images = 0 if self.is_local else len(image_file_paths)
+            num_images = 0 if self.llm_backend.is_local else len(image_file_paths)
             self.prompt_template, image_path_keys = self.__compose_prompt(num_images, longform)
             self.parser = StrOutputParser()
-            self.chain = self.prompt_template | self.llm | self.parser
+            self.chain = self.prompt_template | self.llm_backend.llm | self.parser
 
 
             # Prepare parameters using strategy
             prompt_params = strategy.compose_prompt_params(
-                self.config_conversation,
+                self.conversation_config,
                 image_file_paths,
                 image_path_keys,
                 input_texts
