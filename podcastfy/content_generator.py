@@ -723,9 +723,10 @@ class ContentGenerator:
     def __init__(
         self, 
         is_local: bool=False, 
-        model_name: str="gpt-4",  # Changed from gemini-1.5-pro-latest to gpt-4
-        api_key_label: str="OPENAI_API_KEY",  # Changed from GEMINI_API_KEY to OPENAI_API_KEY
-        conversation_config: Optional[Dict[str, Any]] = None
+        model_name: str="gpt-4",
+        api_key_label: str="OPENAI_API_KEY",
+        conversation_config: Optional[Dict[str, Any]] = None,
+        longform: bool = False  # Add longform parameter to __init__
     ):
         """
         Initialize the ContentGenerator.
@@ -735,10 +736,12 @@ class ContentGenerator:
             model_name (str): The name of the model to use.
             api_key_label (str): The environment variable name for the API key.
             conversation_config (Optional[Dict]): Configuration for conversation settings.
+            longform (bool): Whether to generate long-form content.
         """
         self.config = load_config()
         self.conversation_config = load_conversation_config(conversation_config)
         self.content_generator_config = self.conversation_config.get("content_generator", {})
+        self.longform = longform  # Store longform parameter
         
         # Initialize LLM backend
         self.llm_backend = LLMBackend(
@@ -750,7 +753,7 @@ class ContentGenerator:
         )
         
         # Initialize content generation strategy
-        if longform:
+        if self.longform:  # Use stored longform parameter
             self.strategy = LongFormContentStrategy(
                 self.llm_backend.llm,
                 self.content_generator_config,
