@@ -140,7 +140,6 @@ class AudioMixer:
             
             # Calculate overlap timing
             overlap_duration = 2000  # 2 seconds of overlap
-            fade_out_start = len(intro) - overlap_duration
             
             # Apply fade out to intro during overlap
             intro = intro.fade_out(overlap_duration)
@@ -148,9 +147,19 @@ class AudioMixer:
             # Create a silent segment for the overlap
             overlap = AudioSegment.silent(duration=overlap_duration)
             
-            # Mix the intro with the main audio
+            # Mix the intro with the main audio using overlay
             logger.info("Adding intro music with overlap")
-            final_audio = intro + overlap + final_audio
+            # Start the main audio slightly before the intro ends
+            main_audio_start = len(intro) - overlap_duration
+            
+            # Create a silent segment at the start to match intro length
+            padding = AudioSegment.silent(duration=main_audio_start)
+            
+            # Combine the padding with the main audio
+            padded_main_audio = padding + main_audio
+            
+            # Overlay the intro on top of the padded main audio
+            final_audio = padded_main_audio.overlay(intro)
         
         # Add outro music
         if include_outro and 'outro' in self.assets:

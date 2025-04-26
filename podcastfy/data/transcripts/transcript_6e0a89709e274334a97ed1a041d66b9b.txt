@@ -1,0 +1,17 @@
+<Person1> "Welcome to The Goose Report - One honk a day keeps the chaos away..  And a very special happy birthday to Bob!  Hope you have a fantastic day, filled with cake, presents, and maybe even a little honking!"
+</Person1><Person2> "Honk honk!  Happy birthday, Bob! Now, let's get into those Settled Vitals.  Toronto time!"
+</Person2><Person1> "Toronto fact number one: it's home to the longest street in the world, Yonge Street!  Although, um, that's debatable, I guess." 
+</Person1><Person2> "Fact number two: Toronto has more than 10 million trees! That's a lot of shade." 
+</Person2><Person1> "Number three:  The CN Tower held the record for the world's tallest freestanding structure for over 30 years. Pretty impressive!"
+</Person1><Person2> "Fact four: Toronto is one of the most multicultural cities in the world, with over 140 languages spoken!"
+</Person2><Person1> "And finally, number five:  Toronto was originally called York. Interesting, huh?"
+</Person1><Person2> "Very interesting!  Now, let's dive deep into the fascinating world of AI rag systems." 
+</Person2><Person1> "Alright, so, 'rag systems' isn't really a standard term.  I think what we're really talking about here are Retrieval Augmented Generation systems.  These things are changing the game. Imagine a system that can not only generate text, but also intelligently pull in relevant information from a huge knowledge base. That's RAG in a nutshell." 
+</Person1><Person2> "So, like, it's not just making stuff up? It's actually using real info?"
+</Person2><Person1> "Exactly!   Think of it this way:  the generation part is like a really eloquent writer, and the retrieval part is like a super-efficient research assistant. They work together.  The research assistant finds the right documents, and the writer weaves them into a coherent and informative response." 
+</Person1><Person2> "Got it! But how does the system know which documents are the right ones? That seems like the tricky part." 
+</Person2><Person1> "Great question!  It uses advanced search techniques, often based on vector embeddings.   Basically, it converts the text into numerical representations that capture the meaning and relationships between words.  This allows it to find documents that are semantically similar to the query, even if they don't contain the exact same keywords." 
+</Person1><Person2> "So it's like a really smart librarian who understands the meaning behind the words?"
+</Person2><Person1> "Precisely!  And that’s how these RAG systems are able to provide such insightful and accurate responses.  They're a game-changer for things like chatbots, question-answering systems, and even content creation.”
+</Person1><Person2> “Super cool!  Thanks for breaking that down.”
+</Person2><Person1> "That brings us to the end of today's Goose Report. Keep honking, friends, and remember: even the smallest goose can make a big difference. Fly high, everyone!" </Person1>

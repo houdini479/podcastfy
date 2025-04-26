@@ -18,6 +18,7 @@ from podcastfy.utils.config_conversation import load_conversation_config
 from podcastfy.utils.logger import setup_logger
 from typing import List, Optional, Dict, Any
 import copy
+from datetime import datetime
 
 import logging
 
@@ -108,10 +109,12 @@ def process_content(
                 combined_content += f"\n\n{topic_content}"
 
             # Generate Q&A content using output directory from conversation config
-            random_filename = f"transcript_{uuid.uuid4().hex}.txt"
+            podcast_name = conv_config.get("podcast_name", "podcast").replace(' ', '_').lower()
+            timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+            transcript_filename = f"{podcast_name}_{timestamp}.txt"
             transcript_filepath = os.path.join(
                 output_directories.get("transcripts", "data/transcripts"),
-                random_filename,
+                transcript_filename,
             )
             qa_content = content_generator.generate_qa_content(
                 combined_content,
@@ -122,7 +125,7 @@ def process_content(
 
         if generate_audio:
             api_key = None
-            if tts_model != "edge":
+            if tts_model not in ["edge", "dia"]:  # Skip API key for Edge and Dia models
                 api_key = getattr(config, f"{tts_model.upper().replace('MULTI', '')}_API_KEY")
 
             text_to_speech = TextToSpeech(
@@ -131,9 +134,11 @@ def process_content(
                 conversation_config=conv_config.to_dict(),
             )
 
-            random_filename = f"podcast_{uuid.uuid4().hex}.mp3"
+            podcast_name = conv_config.get("podcast_name", "podcast").replace(' ', '_').lower()
+            timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+            audio_filename = f"{podcast_name}_{timestamp}.mp3"
             audio_file = os.path.join(
-                output_directories.get("audio", "data/audio"), random_filename
+                output_directories.get("audio", "data/audio"), audio_filename
             )
             text_to_speech.convert_to_speech(qa_content, audio_file)
             logger.info(f"Podcast generated successfully using {tts_model} TTS model")

@@ -15,6 +15,7 @@ from typing import List, Tuple, Optional, Dict, Any
 from pydub import AudioSegment
 
 from .tts.factory import TTSProviderFactory
+from .tts.providers.dia import DiaTTS
 from .utils.config import load_config
 from .utils.config_conversation import load_conversation_config
 
@@ -32,22 +33,27 @@ class TextToSpeech:
         Initialize the TextToSpeech class.
 
         Args:
-                        model (str): The model to use for text-to-speech conversion.
-                                                Options are 'elevenlabs', 'gemini', 'openai', 'edge' or 'geminimulti'. Defaults to 'openai'.
-                        api_key (Optional[str]): API key for the selected text-to-speech service.
-                        conversation_config (Optional[Dict]): Configuration for conversation settings.
+            model (str): The model to use for text-to-speech conversion.
+            Options are 'elevenlabs', 'gemini', 'openai', 'edge', 'geminimulti' or 'dia'. Defaults to 'openai'.
+            api_key (Optional[str]): API key for the selected text-to-speech service.
+            conversation_config (Optional[Dict]): Configuration for conversation settings.
         """
         self.config = load_config()
         self.conversation_config = load_conversation_config(conversation_config)
         self.tts_config = self.conversation_config.get("text_to_speech", {})
 
-        # Get API key from config if not provided
-        if not api_key:
+        # Get API key from config if not provided and not using Dia
+        if not api_key and model and model.lower() != 'dia':
             api_key = getattr(self.config, f"{model.upper().replace('MULTI', '')}_API_KEY", None)
+
+        # Get the full model ID for Dia
+        model_id = model
+        if model and model.lower() == 'dia':
+            model_id = self.tts_config.get('dia', {}).get('model', model)
 
         # Initialize provider using factory
         self.provider = TTSProviderFactory.create(
-            provider_name=model, api_key=api_key, model=model
+            provider_name=model, api_key=api_key, model=model_id
         )
 
         # Setup directories and config
@@ -81,72 +87,27 @@ class TextToSpeech:
         Convert input text to speech and save as an audio file.
 
         Args:
-                text (str): Input text to convert to speech.
-                output_file (str): Path to save the output audio file.
+            text (str): Input text to convert to speech.
+            output_file (str): Path to save the output audio file.
 
         Raises:
             ValueError: If the input text is not properly formatted
         """
-        # Validate transcript format
-        # self._validate_transcript_format(text)
-
-        cleaned_text = text
-
         try:
+            # For Dia, process the entire text at once
+            if isinstance(self.provider, DiaTTS):
+                audio_data = self.provider.generate_audio(text, "S1", None, "S2")
+                os.makedirs(os.path.dirname(output_file), exist_ok=True)
+                with open(output_file, "wb") as f:
+                    f.write(audio_data)
+                logger.info(f"Audio saved to {output_file}")
+                return
 
-            if (
-                "multi" in self.provider.model.lower()
-            ):  # refactor: We should have instead MultiSpeakerTTS and SingleSpeakerTTS classes
-                provider_config = self._get_provider_config()
-                voice = provider_config.get("default_voices", {}).get("question")
-                voice2 = provider_config.get("default_voices", {}).get("answer")
-                model = provider_config.get("model")
-                audio_data_list = self.provider.generate_audio(
-                    cleaned_text,
-                    voice="S",
-                    model="en-US-Studio-MultiSpeaker",
-                    voice2="R",
-                    ending_message=self.ending_message,
-                )
-
-                try:
-                    # First verify we have data
-                    if not audio_data_list:
-                        raise ValueError("No audio data chunks provided")
-
-                    logger.info(f"Starting audio processing with {len(audio_data_list)} chunks")
-                    combined = AudioSegment.empty()
-                    
-                    for i, chunk in enumerate(audio_data_list):
-                        # Save chunk to temporary file
-                        #temp_file = "./tmp.mp3"
-                        #with open(temp_file, "wb") as f:
-                        #    f.write(chunk)
-                        
-                        segment = AudioSegment.from_file(io.BytesIO(chunk))
-                        logger.info(f"################### Loaded chunk {i}, duration: {len(segment)}ms")
-                        
-                        combined += segment
-                    
-                    # Export with high quality settings
-                    os.makedirs(os.path.dirname(output_file), exist_ok=True)
-                    combined.export(
-                        output_file, 
-                        format=self.audio_format,
-                        codec="libmp3lame",
-                        bitrate="320k"
-                    )
-                    
-                except Exception as e:
-                    logger.error(f"Error during audio processing: {str(e)}")
-                    raise
-            else:
-                with tempfile.TemporaryDirectory(dir=self.temp_audio_dir) as temp_dir:
-                    audio_segments = self._generate_audio_segments(
-                        cleaned_text, temp_dir
-                    )
-                    self._merge_audio_files(audio_segments, output_file)
-                    logger.info(f"Audio saved to {output_file}")
+            # For other providers, use the existing Q&A pair processing
+            with tempfile.TemporaryDirectory(dir=self.temp_audio_dir) as temp_dir:
+                audio_segments = self._generate_audio_segments(text, temp_dir)
+                self._merge_audio_files(audio_segments, output_file)
+                logger.info(f"Audio saved to {output_file}")
 
         except Exception as e:
             logger.error(f"Error converting text to speech: {str(e)}")

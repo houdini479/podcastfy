@@ -1,0 +1,11 @@
+<Person1> "Welcome to The Goose Report - One honk a day keeps the chaos away..  I'm so excited for today's episode! We've got some honking good news to share, from record user sign-ups to exciting updates on our Agentic Dispute Platform. Plus, a very special happy birthday shout-out to one of our own!  Ready to fly, co-host?"
+</Person1><Person2> "Born ready! Let's get this show on the road.  Can't wait to hear about those record sign-ups. And yes, big happy birthday to Harsh from the whole team! Hope you have a fantastic day!"
+</Person2><Person1> "Absolutely!  Happy birthday, Harsh!  Alright, let's get down to business. First up, we'll be covering our Settled Vitals, where we'll share some exciting internal updates.  Then, we'll wrap things up with a motivational send-off. Okay, let's move on to keeping tabs on what's going on with our business in Settled Vitals.   What do we have first on our agenda today?"
+</Person1><Person2> "Well, first up: our user sign-ups have officially hit 10,000!  That's a record high, folks!  The TripFix flock is growing bigger by the day." 
+</Person2><Person1> "I see. Ten thousand users! That's incredible!   Uh, what else do we have in our Settled Vitals?" 
+</Person1><Person2> "Next up, we have a huge update on our Agentic Dispute Platform.  Phase 1 is officially complete!  Big shout-out to the entire development team for their incredible work on this." 
+</Person2><Person1> "Got it. That's fantastic news! The Agentic Dispute Platform is going to be a game-changer. Now, for our last bit of news...anything interesting happening in the industry?"
+</Person1><Person2> "You know it! Some exciting news out of Ontario: AI-assisted mediation services have officially gained regulatory green light!  This is a major step forward for the legal tech space and opens up exciting new possibilities. " 
+</Person2><Person1> "Interesting. Well, that wraps up our Settled Vitals for today.    It's time to bring this episode of The Goose Report to a close.  Any final thoughts, co-host?" 
+</Person1><Person2> "Just want to remind everyone to keep honking and innovating.  Together, we can make a real difference in the legal tech world." 
+</Person2><Person1> "Couldn't have said it better myself!  Thanks for joining us today, everyone, and until next time, fly high!   One honk a day keeps the chaos away." </Person1>

@@ -7,6 +7,8 @@ from .providers.openai import OpenAITTS
 from .providers.edge import EdgeTTS
 from .providers.gemini import GeminiTTS
 from .providers.geminimulti import GeminiMultiTTS
+from .providers.dia import DiaTTS
+
 class TTSProviderFactory:
     """Factory class for creating TTS providers."""
     
@@ -15,7 +17,8 @@ class TTSProviderFactory:
         'openai': OpenAITTS,
         'edge': EdgeTTS,
         'gemini': GeminiTTS,
-        'geminimulti': GeminiMultiTTS
+        'geminimulti': GeminiMultiTTS,
+        'dia': DiaTTS
     }
     
     @classmethod

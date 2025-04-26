@@ -1,0 +1,9 @@
+<Person1> "Welcome to The Goose Report - One honk a day keeps the chaos away..  And boy, do we have a honker of a show for you today!  Ready to fly, eh?"
+</Person1><Person2> "Born ready! Let's get those wings flapping! What's the flight plan, Captain?"
+</Person2><Person1> "First up, we've got our Settled Vitals, where we'll check the pulse of the flock. And then, we're diving deep into…well, nothing today, apparently.  HQ seems to have grounded us on the Deep Dive." 
+</Person1><Person2> "A little rest for our weary wings, maybe?  Sounds good to me!  Though, I always love a good deep dive…" 
+</Person2><Person1> "Me too! But hey, it happens!  Before we get started, though, a very important mission:  A huge happy birthday to Harsh from the whole TripFix flock! Hope you have a fantastic day, Harsh!" 
+</Person1><Person2> "Hear, hear!  Happy birthday, Harsh!  May your day be filled with cake, presents, and minimal turbulence!"
+</Person2><Person1> "Absolutely! Okay, on to Settled Vitals! ...Just kidding! Skipping that today too, seems like. So, let's glide right into our closing remarks, shall we?"
+</Person1><Person2> "Smooth landing, then! I'm all for efficiency. Let's wrap this up!"
+</Person2><Person1> "Alright, team, that's all she wrote for today's Goose Report.  A short and sweet one, but hey, sometimes the shortest flights are the sweetest, right?  Fly high, everyone, and we'll catch you on the next honk!"</Person1>
