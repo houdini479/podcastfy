@@ -8,6 +8,7 @@ with configuration management and temporary file handling.
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 import os
 import shutil
 import yaml
@@ -28,6 +29,7 @@ logger = logging.getLogger(__name__)
 BASE_DIR = Path(__file__).parent.parent
 TEMP_DIR = BASE_DIR / "api" / "temp_audio"
 ASSETS_DIR = BASE_DIR / "assets" / "music"
+FRONTEND_DIR = BASE_DIR / "frontend"
 
 # Ensure directories exist
 TEMP_DIR.mkdir(parents=True, exist_ok=True)
@@ -68,6 +70,14 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Mount static files
+app.mount("/static", StaticFiles(directory=str(FRONTEND_DIR)), name="static")
+
+@app.get("/")
+async def read_root():
+    """Serve the frontend index.html file."""
+    return FileResponse(str(FRONTEND_DIR / "index.html"))
 
 @app.post("/generate")
 async def generate_podcast_endpoint(data: dict):
